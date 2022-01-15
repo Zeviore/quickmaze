@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Quickmaze</title>
+  <style type="text/css">
+    body {
+    	margin: 0;
+      display: flex;
+      min-height: 100vh;
+      background: rgb(44,44,44);
+      color: white;
+    }
+    canvas {
+      aspect-ratio: 1 / 1;
+      width: min(100%, 100vh);
+    }
+    .game-wrapper {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    .settings {
+      padding: 1rem;
+      width: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings">
+    <h1>Quickmaze</h1>
+    <p>Controls: wasd or arrow keys.<br />You control the blue square, and you are trying to reach the green square.<br />You can wrap from one side of the board to the other (when there are no borders on either side). Each level is randomly generated.</p>
+    <p>Setting a small grid size lets you test your reflexes. Setting a large grid lets you test your puzzling skills.</p>
+    <label for="gridsize">Grid size</label>
+    <input type="number" name="gridsize" value="4" min="3" max="100">
+  </div>
+  <div class="game-wrapper"></div>
+  <script type="text/javascript" src="script.js"></script>
+</body>
+</html>
