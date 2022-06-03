@@ -130,25 +130,31 @@ class Game {
   }
 
   get isLevelPossible() {
-    return this.accessibleSquares(this.playerPos).has(this.goalPos.toString());
+    const goal = this.goalPos.toString();
+    for (let square of this.accessibleSquares(this.playerPos)) {
+      if (square === goal) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  accessibleSquares(currentSquare=[0,0]) {
+  * accessibleSquares(currentSquare=[0,0]) {
     let accessibleSquares = new Map([[currentSquare.toString(), currentSquare]]);
-    accessibleSquares.forEach((value, key, map) => {
-      ['left', 'right', 'up', 'down'].forEach((direction) => {
-        let target = this.getSquareInDirection(value, direction);
+    yield currentSquare.toString();
+    for (let [key, square] of accessibleSquares) {
+      for (let direction of ['left', 'right', 'up', 'down']) {
+        let target = this.getSquareInDirection(square, direction);
         if (
-          this.canMoveInDirection(value, direction, target) &&
-          !map.has(target.toString())
+          this.canMoveInDirection(square, direction, target) &&
+          !accessibleSquares.has(target.toString())
         ) {
-          map.set(target.toString(), target);
+          accessibleSquares.set(target.toString(), target);
+          yield target.toString();
         }
-      });
-    });
-    return accessibleSquares;
+      }
+        }
   }
-
 
   getSquareInDirection(origin, direction) {
     switch(direction) {
