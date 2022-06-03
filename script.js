@@ -5,6 +5,7 @@ class Canvas {
     this.width = el.width = el.getBoundingClientRect().width;
     this.height = el.height = el.getBoundingClientRect().height;
     this.ctx = el.getContext('2d');
+    this.el = el;
   }
   renderSquare(posSize=[0,0,0,0], fill='black') {
     this.ctx.beginPath();
@@ -20,6 +21,8 @@ class Game {
   BORDER_BOTTOM = 2;
   BORDER_LEFT = 3;
 
+  DIRECTIONS = ['left', 'right', 'up', 'down'];
+
   constructor() {
     this.canvas = new Canvas();
     this.playerPos = [0, 0];
@@ -33,7 +36,11 @@ class Game {
         this.init();
       });
     });
-    document.onkeydown = this.controls.bind(this);
+    document.onkeydown = this.keyControls.bind(this);
+
+    ['touchstart', 'touchmove'].forEach(eventName => {
+      document.addEventListener(eventName, this.touchControls.bind(this));
+    });
   }
 
   init() {
@@ -153,7 +160,7 @@ class Game {
           yield target.toString();
         }
       }
-        }
+    }
   }
 
   getSquareInDirection(origin, direction) {
@@ -199,35 +206,59 @@ class Game {
     return this.borders.get(square.toString());
   }
 
-  controls(e) {
-    const oldPos = [...this.playerPos];
+  keyControls(e) {
     switch(e.code) {
       case 'KeyA':
       case 'ArrowLeft':
-        if (this.canMoveInDirection(this.playerPos, 'left')) {
-          this.playerPos = this.getSquareInDirection(this.playerPos, 'left');
-        }
+        return this.tryMovingInDirection('left');
         break;
       case 'KeyW':
       case 'ArrowUp':
-        if (this.canMoveInDirection(this.playerPos, 'up')) {
-          this.playerPos = this.getSquareInDirection(this.playerPos, 'up');
-        }
-        break;
+        return this.tryMovingInDirection('up');
       case 'KeyD':
       case 'ArrowRight':
-        if (this.canMoveInDirection(this.playerPos, 'right')) {
-          this.playerPos = this.getSquareInDirection(this.playerPos, 'right');
-        }
-        break;
+        return this.tryMovingInDirection('right');
       case 'KeyS':
       case 'ArrowDown':
-        if (this.canMoveInDirection(this.playerPos, 'down')) {
-          this.playerPos = this.getSquareInDirection(this.playerPos, 'down');
-        }
-        break;
+        return this.tryMovingInDirection('down');
     }
+  }
 
+  touchControls(e) {
+    let touch = e.touches[0];
+    let square = this.getSquareByCoordinates(touch.pageX, touch.pageY);
+    if (!square) return;
+    this.tryMovingToSquare(square);
+  }
+
+  getSquareByCoordinates(absX, absY) {
+    let rect = this.canvas.el.getBoundingClientRect();
+    let x = absX - rect.x;
+    let y = absY - rect.y;
+
+    let width = this.canvas.el.width;
+    let height = this.canvas.el.height;
+
+    if (x < 0 || x > width) return null;
+    if (y < 0 || y > height) return null;
+
+    return [
+      Math.floor(x / (width / this.gridSize)),
+      Math.floor(y / (height / this.gridSize)),
+    ];
+  }
+
+  tryMovingToSquare(targetSquare) {
+    let direction = this.directionOfSquares(this.playerPos, targetSquare);
+    if (!direction) return;
+    this.tryMovingInDirection(direction);
+  }
+
+  tryMovingInDirection(direction) {
+    const oldPos = [...this.playerPos];
+    if (this.canMoveInDirection(this.playerPos, direction)) {
+      this.playerPos = this.getSquareInDirection(this.playerPos, direction);
+    }
     if (oldPos.toString() !== this.playerPos.toString()) {
       if (this.playerPos.toString() === this.goalPos.toString()) {
         this.generateLevel();
@@ -235,6 +266,17 @@ class Game {
       this.render();
     }
   }
+
+  directionOfSquares(source, target) {
+    for (let direction of this.DIRECTIONS) {
+      let square = this.getSquareInDirection(source, direction);
+      if (square.toString() === target.toString()) {
+        return direction;
+      }
+    }
+    return null;
+  }
+
 }
 
 game = new Game();
