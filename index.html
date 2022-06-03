@@ -6,32 +6,56 @@
   <style type="text/css">
     body {
     	margin: 0;
-      display: flex;
-      min-height: 100vh;
       background: rgb(44,44,44);
       color: white;
+      color-scheme: dark;
+      text-align: center;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    h1 {
+      margin: 0;
     }
     canvas {
       aspect-ratio: 1 / 1;
-      width: min(100%, 100vh);
+      height: min(100%, 100vw);
     }
     .game-wrapper {
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
+      max-height: calc(100vh - 2.333rem);
+      flex-grow:  1;
     }
-    .settings {
-      padding: 1rem;
-      width: 200px;
+    label {
+      font-size: 18px;
+    }
+    .toggleInput {
+      display: none;
+    }
+    #infotoggle:not(:checked) ~ .info {
+      display: none;
+    }
+    #settingstoggle:not(:checked) ~ .settings {
+      display: none;
+    }
+    .info, .settings {
+      position: absolute;
+      top: 4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.5);
     }
   </style>
 </head>
 <body>
-  <div class="settings">
-    <h1>Quickmaze</h1>
-    <p>Controls: wasd or arrow keys.<br />You control the blue square, and you are trying to reach the green square.<br />You can wrap from one side of the board to the other (when there are no borders on either side). Each level is randomly generated.</p>
+  <input type="checkbox" id="infotoggle" class="toggleInput" />
+  <input type="checkbox" id="settingstoggle" class="toggleInput" />
+  <h1>Quickmaze <label for="infotoggle">ℹ️</label><label for="settingstoggle">⚙️</label></h1>
+  <div class="info">
+    <p>Controls: touch, wasd or arrow keys.<br />You control the blue square, and you are trying to reach the green square.<br />You can wrap from one side of the board to the other (when there are no borders on either side). Each level is randomly generated.</p>
     <p>Setting a small grid size lets you test your reflexes. Setting a large grid lets you test your puzzling skills.</p>
+  </div>
+  <div class="settings">
     <label for="gridsize">Grid size</label>
     <input type="number" name="gridsize" value="4" min="3" max="100">
   </div>

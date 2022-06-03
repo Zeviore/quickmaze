@@ -210,17 +210,24 @@ class Game {
     switch(e.code) {
       case 'KeyA':
       case 'ArrowLeft':
-        return this.tryMovingInDirection('left');
+        this.tryMovingInDirection('left');
+        e.preventDefault();
         break;
       case 'KeyW':
       case 'ArrowUp':
-        return this.tryMovingInDirection('up');
+        this.tryMovingInDirection('up');
+        e.preventDefault();
+        break;
       case 'KeyD':
       case 'ArrowRight':
-        return this.tryMovingInDirection('right');
+        this.tryMovingInDirection('right');
+        e.preventDefault();
+        break;
       case 'KeyS':
       case 'ArrowDown':
-        return this.tryMovingInDirection('down');
+        this.tryMovingInDirection('down');
+        e.preventDefault();
+        break;
     }
   }
 
