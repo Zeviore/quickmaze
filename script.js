@@ -235,6 +235,7 @@ class Game {
     let touch = e.touches[0];
     let square = this.getSquareByCoordinates(touch.pageX, touch.pageY);
     if (!square) return;
+    e.preventDefault();
     this.tryMovingToSquare(square);
   }
 
